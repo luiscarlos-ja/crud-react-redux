@@ -23,7 +23,8 @@ module.exports = {
   plugins: ['react', 'prettier'],
   rules: {
     'react/prop-types': 'off',
-    'react/react-in-jsx-scope': 'off'
+    'react/react-in-jsx-scope': 'off',
+    'scss.lint.unknownAtRules': 'ignore'
   },
   settings: {
     react: {
