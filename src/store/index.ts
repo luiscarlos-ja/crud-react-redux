@@ -1,6 +1,11 @@
-import { configureStore, type Middleware } from '@reduxjs/toolkit'
+import {
+  configureStore,
+  Tuple,
+  type Middleware,
+  PayloadAction
+} from '@reduxjs/toolkit'
 import { toast } from 'sonner'
-import usersReducer, { rollbackUser } from './users/slice'
+import usersReducer, { UserId, rollbackUser } from './users/slice'
 
 const persistanceLocalStorageMiddleware: Middleware =
   (store) => (next) => (action) => {
@@ -10,7 +15,7 @@ const persistanceLocalStorageMiddleware: Middleware =
 
 const syncWithDatabaseMiddleware: Middleware =
   (store) => (next) => (action) => {
-    const { type, payload } = action
+    const { type, payload } = action as PayloadAction<UserId>
     const previousState = store.getState() as RootState
     next(action)
 
@@ -42,7 +47,8 @@ export const store = configureStore({
   reducer: {
     users: usersReducer
   },
-  middleware: [persistanceLocalStorageMiddleware, syncWithDatabaseMiddleware]
+  middleware: () =>
+    new Tuple(persistanceLocalStorageMiddleware, syncWithDatabaseMiddleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>
